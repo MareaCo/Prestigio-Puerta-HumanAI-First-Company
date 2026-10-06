@@ -23,7 +23,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;background:#111D33;overflow:hidden;overscroll-behavior:none;touch-action:manipulation}
 body{font-family:D,system-ui,sans-serif;color:var(--white);-webkit-font-smoothing:antialiased;user-select:none}
-#viewport{position:fixed;inset:0;perspective:2200px;overflow:hidden;background:radial-gradient(120vmax 80vmax at 75% 20%,#1D3155 0%,var(--navy) 60%)}
+#viewport{position:fixed;inset:0;perspective:2200px;overflow:hidden;background:radial-gradient(70vmax 55vmax at 58% 22%,#1D3155 0%,var(--navy) 62%) var(--navy)}
 body.print #viewport{background:none}
 #stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center;
   background:transparent;overflow:hidden;transform-style:preserve-3d}
@@ -43,8 +43,8 @@ h2{font-size:76px;max-width:1500px}
 [data-s]{opacity:0;transform:translateY(26px);transition:opacity .6s var(--ease),transform .7s var(--ease)}
 [data-s].on{opacity:1;transform:none}
 /* chrome */
-#logo{position:absolute;right:70px;bottom:52px;width:220px;opacity:.95;z-index:5}
-#hud{position:absolute;left:70px;bottom:58px;display:flex;align-items:center;gap:18px;z-index:5;font-size:22px;color:var(--dim);font-weight:500}
+#logo{position:absolute;right:calc(70px + var(--er,0px));bottom:52px;width:220px;opacity:.95;z-index:5}
+#hud{position:absolute;left:calc(70px + var(--el,0px));bottom:58px;display:flex;align-items:center;gap:18px;z-index:5;font-size:22px;color:var(--dim);font-weight:500}
 #dots{display:flex;gap:9px}
 #dots i{width:11px;height:11px;border-radius:50%;border:2px solid var(--dim);display:block}
 #dots i.done{background:var(--dim)}
@@ -654,7 +654,11 @@ function prev(){if(step>0){step--;apply(-1)}else if(idx>0){idx--;step=+slides[id
 /* ---- scale ---- */
 function fit(){const vv=window.visualViewport,w=vv?vv.width:innerWidth,h=vv?vv.height:innerHeight;
  const cs=getComputedStyle(document.documentElement),sl=parseFloat(cs.getPropertyValue('--sl'))||0,sr=parseFloat(cs.getPropertyValue('--sr'))||0;
- const aw=w-sl-sr,W=Math.max(1920,1080*aw/h),H=Math.max(1080,1920*h/aw),k=aw/W;stage.style.width=W+'px';stage.style.height=H+'px';stage.style.setProperty('--gx',((W-1920)/2)+'px');stage.style.setProperty('--gy',((H-1080)/2)+'px');stage.style.left=(sl+aw/2)+'px';stage.style.top=(h/2)+'px';stage.style.transform=`translate(-50%,-50%) scale(${k})`}
+ const W=Math.max(1920,1080*w/h),H=Math.max(1080,1920*h/w),k=w/W,el=sl/k,er=sr/k;
+ stage.style.width=W+'px';stage.style.height=H+'px';
+ stage.style.setProperty('--gx',Math.max((W-1920)/2,el,er)+'px');stage.style.setProperty('--gy',((H-1080)/2)+'px');
+ stage.style.setProperty('--el',el+'px');stage.style.setProperty('--er',er+'px');
+ stage.style.left=(w/2)+'px';stage.style.top=(h/2)+'px';stage.style.transform=`translate(-50%,-50%) scale(${k})`}
 addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,250));window.visualViewport&&visualViewport.addEventListener('resize',fit);
 
 /* ---- input ---- */
